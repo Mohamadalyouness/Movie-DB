@@ -39,7 +39,7 @@ app.get('/hello/:id?', (req, res) => {
 
 app.get('/search', (req, res) => {
 
-    const searchQuery = req.query.s;
+    const { searchQuery } = req.query;
 
     if (searchQuery) {
         res.status(200).json({ status: 200, message: "ok", data: searchQuery });
@@ -48,45 +48,54 @@ app.get('/search', (req, res) => {
     }
 });
 
-app.get('/movies/add', (req, res) => {
-    res.send('Hello World')
-})
-
 app.get('/movies/get', (req, res) => {
     res.status(200).json({ status: 200, data: movies });
 });
 
 app.get('/movies/get/by-date', (req, res) => {
     movies.sort((a, b) => {
-    if (a.year < b.year) return -1;
-    if (a.year > b.year) return 1;
-    return 0;
-  });
-  
-    res.status(200).json({ status: 200, data: movies });
-  });
-  
-  app.get('/movies/get/by-rating', (req, res) => {
-    movies.sort((a, b) => {
-    if (a.rating < b.rating) return -1;
-    if (a.rating > b.rating) return 1;
-    return 0;
-  });
-  
-    res.status(200).json({ status: 200, data: movies });
-  });
-  
-  app.get('/movies/get/by-title', (req, res) => {
-    movies.sort((a, b) => {
-    if (a.title < b.title) return -1;
-    if (a.title > b.title) return 1;
-    return 0;
-  });
-  
-    res.status(200).json({ status: 200, data: movies });
-  });
-  
+        if (a.year < b.year) return -1;
+        if (a.year > b.year) return 1;
+        return 0;
+    });
 
+    res.status(200).json({ status: 200, data: movies });
+});
+
+app.get('/movies/get/by-rating', (req, res) => {
+    movies.sort((a, b) => {
+        if (a.rating < b.rating) return -1;
+        if (a.rating > b.rating) return 1;
+        return 0;
+    });
+
+    res.status(200).json({ status: 200, data: movies });
+});
+
+app.get('/movies/get/by-title', (req, res) => {
+    movies.sort((a, b) => {
+        if (a.title < b.title) return -1;
+        if (a.title > b.title) return 1;
+        return 0;
+    });
+
+    res.status(200).json({ status: 200, data: movies });
+});
+
+app.get('/movies/read/id/:index', (req, res) => {
+    const index = parseInt(req.params.index);
+    
+    if (isNaN(index) || index < 0 || index >= movies.length) {
+        res.status(404).json({ status: 404, error: true, message: "Movie not found" });
+    } else {
+        const movie = movies[index];
+        res.status(200).json({ status: 200, data: movie });
+    }
+});
+
+app.get('/movies/add', (req, res) => {
+    res.send('Hello World')
+})
 
 app.get('//movies/edit', (req, res) => {
     res.send('Hello World')
