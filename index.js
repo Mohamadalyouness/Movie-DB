@@ -57,10 +57,33 @@ app.get('/movies/get', (req, res) => {
 });
 
 app.get('/movies/get/by-date', (req, res) => {
-    const sortedMovies = movies.sort((a, b) => {
-      return new Date(a.releaseDate) - new Date(b.releaseDate);
-    });
-    res.status(200).json({ status: 200, data: sortedMovies });
+    movies.sort((a, b) => {
+    if (a.year < b.year) return -1;
+    if (a.year > b.year) return 1;
+    return 0;
+  });
+  
+    res.status(200).json({ status: 200, data: movies });
+  });
+  
+  app.get('/movies/get/by-rating', (req, res) => {
+    movies.sort((a, b) => {
+    if (a.rating < b.rating) return -1;
+    if (a.rating > b.rating) return 1;
+    return 0;
+  });
+  
+    res.status(200).json({ status: 200, data: movies });
+  });
+  
+  app.get('/movies/get/by-title', (req, res) => {
+    movies.sort((a, b) => {
+    if (a.title < b.title) return -1;
+    if (a.title > b.title) return 1;
+    return 0;
+  });
+  
+    res.status(200).json({ status: 200, data: movies });
   });
   
 
