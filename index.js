@@ -119,11 +119,32 @@ app.get('/movies/add', (req, res) => {
     res.status(200).json({ status: 200, data: movies });
 });
 
+app.put('/movies/edit/:id', (req, res) => {
+    const movieId = parseInt(req.params.id);
+    const { title, rating } = req.query;
+  
+    const movieToUpdate = movies.find((movie) => movie.id === movieId);
+  
+    if (!movieToUpdate) {
+      return res.status(404).json({
+        status: 404,
+        error: true,
+        message: `Movie with ID ${movieId} not found`,
+      });
+    }
+    
+    if (title) {
+      movieToUpdate.title = title;
+    }
+
+    if (rating) {
+      movieToUpdate.rating = parseFloat(rating);
+    }
+  
+    res.status(200).json({ status: 200, data: movies });
+  });
 
 
-app.get('//movies/edit', (req, res) => {
-    res.send('Hello World')
-})
 app.delete('/movies/delete/id/:index', (req, res) => {
     const movieIndex = parseInt(req.params.index);
     const result = deleteMovieByIndex(movieIndex);
