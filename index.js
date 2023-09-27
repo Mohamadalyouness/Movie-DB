@@ -96,10 +96,10 @@ app.use(express.urlencoded({ extended: false }));
 // app.use('/api/movies', authenticateUser);
 
 const movies = [
-    { title: 'Jaws', year: 1975, rating: 8 },
-    { title: 'Avatar', year: 2009, rating: 7.8 },
-    { title: 'Brazil', year: 1985, rating: 8 },
-    { title: 'الإرهاب والكباب', year: 1992, rating: 6.2 }
+    { id:0, title: 'Jaws', year: 1975, rating: 8 },
+    { id:1, title: 'Avatar', year: 2009, rating: 7.8 },
+    { id:2, title: 'Brazil', year: 1985, rating: 8 },
+    { id:3, title: 'الإرهاب والكباب', year: 1992, rating: 6.2 }
 ]
   
   
@@ -210,42 +210,42 @@ app.get('/api/addmovies', (req, res) => {
     res.status(200).json({ status: 200, data: movies });
 });
 
-app.get('api/editmovies', (req, res) => {
-    // const movieId = parseInt(req.params.id);
-    // const { title, year, rating } = req.query;
+app.get('/api/editmovies/:id', (req, res) => {
+    const movieId = parseInt(req.params.id);
+    const { title, year, rating } = req.query;
   
-    // const movieToUpdate = movies.find((movie) => movie.id === movieId);
+    const movieToUpdate = movies.find((movie) => movie.id === movieId);
   
-    // if (!movieToUpdate) {
-    //   return res.status(404).json({
-    //     status: 404,
-    //     error: true,
-    //     message: `Movie with ID ${movieId} not found`,
-    //   });
-    // }
+    if (!movieToUpdate) {
+      return res.status(404).json({
+        status: 404,
+        error: true,
+        message: `Movie with ID ${movieId} not found`,
+      });
+    }
     
-    // if (title) {
-    //   movieToUpdate.title = title;
-    // }
-    // if (year) {
-    //     movieToUpdate.year = year;
-    //   }
+    if (title) {
+      movieToUpdate.title = title;
+    }
+    if (year) {
+        movieToUpdate.year = year;
+      }
 
-    // if (rating) {
-    //   movieToUpdate.rating = parseFloat(rating);
-    // }
-    console.log("hello world");
+    if (rating) {
+      movieToUpdate.rating = parseFloat(rating);
+    }
     res.status(200).json({ status: 200, data: movies });
   });
 
 
-app.delete('api/deletemovies/:index', (req, res) => {
-    const movieIndex = parseInt(req.params.index);
-    const result = deleteMovieByIndex(movieIndex);
+  app.get('/api/deletemovies/:id', (req, res) => {
+    const movieIndex = parseInt(req.params.id);
+    const result = deleteMovieById(movieIndex);
 
     res.status(result.status).json(result);
 });
-function deleteMovieByIndex(index) {
+
+function deleteMovieById(index) {
     if (isNaN(index) || index < 0 || index >= movies.length) {
         return {
             status: 404,
@@ -253,15 +253,13 @@ function deleteMovieByIndex(index) {
             message: "Movie not found",
         };
     } else {
-        const deletedMovie = movies[index];
-        movies.splice(index, 1);
+        const deletedMovie = movies.splice(index, 1)[0];
         return {
             status: 200,
             data: deletedMovie,
         };
     }
 }
-
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
