@@ -82,9 +82,9 @@ app.get('/movies/get/by-title', (req, res) => {
     res.status(200).json({ status: 200, data: movies });
 });
 
-app.get('/movies/read/id/:index', (req, res) => {
+app.get('/movies/get/id/:index', (req, res) => {
     const index = parseInt(req.params.index);
-    
+
     if (isNaN(index) || index < 0 || index >= movies.length) {
         res.status(404).json({ status: 404, error: true, message: "Movie not found" });
     } else {
@@ -93,21 +93,59 @@ app.get('/movies/read/id/:index', (req, res) => {
     }
 });
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
 app.get('/movies/add', (req, res) => {
-    res.send('Hello World')
-})
+    const { title, year, rating } = req.query;
+    if (!title || !year) {
+        return res.status(403).json({
+            status: 403,
+            error: true,
+            message: 'You cannot create a movie without providing a title and a year',
+        });
+    }
+    if (!/^\d{4}$/.test(year)) {
+        return res.status(403).json({
+            status: 403,
+            error: true,
+            message: 'Year must be a 4-digit number',
+        });
+    }
+    const parsedRating = rating ? parseFloat(rating) : 4;
+    const newMovie = { title, year: parseInt(year), rating: parsedRating };
+    movies.push(newMovie);
+    res.status(200).json({ status: 200, data: movies });
+});
+
+
 
 app.get('//movies/edit', (req, res) => {
     res.send('Hello World')
 })
+app.delete('/movies/delete/id/:index', (req, res) => {
+    const movieIndex = parseInt(req.params.index);
+    const result = deleteMovieByIndex(movieIndex);
 
-app.get('//movies/delete', (req, res) => {
-    res.send('Hello World')
-})
-
-
-
-
+    res.status(result.status).json(result);
+});
+function deleteMovieByIndex(index) {
+    if (isNaN(index) || index < 0 || index >= movies.length) {
+        return {
+            status: 404,
+            error: true,
+            message: "Movie not found",
+        };
+    } else {
+        const deletedMovie = movies[index];
+        movies.splice(index, 1);
+        return {
+            status: 200,
+            data: deletedMovie,
+        };
+    }
+}
 
 app.listen(3000, () => {
     console.log('Online');
