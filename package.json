@@ -1,14 +1,19 @@
-{     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1", 
-      "dev": "nodemon index.js"
-      
+{
+  "name": "movie-db",
+  "version": "1.0.0",
+  "description": "movie streaming service for CODI",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongodb": "^6.1.0",
+    "mongoose": "^7.5.3"
   }
-  
 }
-
-
-
-
-
-
-

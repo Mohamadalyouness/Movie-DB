@@ -1,5 +1,99 @@
-const express = require('express');
+import express from "express";
+
+import mongoose from "mongoose";
+
+const port = 3000;
+
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// const users = [
+//     { username: 'John', password: '1234' },
+//     { username: 'Jane', password: '5678' },
+//   ];
+//   function authenticateUser(req, res, next) {
+//     const { username, password } = req.headers;
+  
+//     const authenticatedUser = users.find(
+//       (user) => user.username === username && user.password === password
+//     );
+  
+//     if (authenticatedUser) {
+//       next();
+//     } else {
+//       res.status(401).json({ error: 'Authentication failed' });
+//     }
+//   }
+  
+  
+//   app.post('/users/add', (req, res) => {
+//     const { username, password } = req.query;
+  
+//     if (!username || !password) {
+//       return res.status(400).json({ status: 400, error: true, message: 'Username and password are required' });
+//     }
+  
+//     const newUser = { username, password };
+//     users.push(newUser);
+  
+//     res.status(201).json({ status: 201, data: users });
+//   });
+  
+//   app.get('/users', (req, res) => {
+//     res.status(200).json({ status: 200, data: users });
+//   });
+  
+//   app.get('/users/:index', (req, res) => {
+//     const index = parseInt(req.params.index);
+
+//     if (isNaN(index) || index < 0 || index >= users.length) {
+//         res.status(404).json({ status: 404, error: true, message: "user not found" });
+//     } else {
+//         const user = users[index];
+//         res.status(200).json({ status: 200, data: user });
+//     }
+// });
+  
+//   app.put('/users/:username', (req, res) => {
+//     const { username } = req.params;
+//     const { password } = req.body;
+  
+//     const userIndex = users.findIndex((user) => user.username === username);
+  
+//     if (userIndex === -1) {
+//       return res.status(404).json({ status: 404, error: true, message: 'User not found' });
+//     }
+  
+//     if (password) {
+//       users[userIndex].password = password;
+//     }
+  
+//     res.status(200).json({ status: 200, data: users[userIndex] });
+//   });
+  
+//   app.delete('/users/:username', (req, res) => {
+//     const { username } = req.params;
+//     const userIndex = users.findIndex((user) => user.username === username);
+  
+//     if (userIndex === -1) {
+//       return res.status(404).json({ status: 404, error: true, message: 'User not found' });
+//     }
+  
+//     const deletedUser = users.splice(userIndex, 1);
+  
+//     res.status(200).json({ status: 200, data: deletedUser[0] });
+//   });
+// const moviesSchema = new mongoose.Schema({
+//     title: String,
+//     year: Number,
+//     rating: Number,
+//   });
+  
+// const Movies=mongoose.model("movies",moviesSchema);
+
+// app.use('/api/movies', authenticateUser);
 
 const movies = [
     { title: 'Jaws', year: 1975, rating: 8 },
@@ -7,8 +101,9 @@ const movies = [
     { title: 'Brazil', year: 1985, rating: 8 },
     { title: 'الإرهاب والكباب', year: 1992, rating: 6.2 }
 ]
-//route of the port
-
+  
+  
+  
 app.get('/', (req, res) => {
     res.send('Hello again')
 })
@@ -20,11 +115,12 @@ app.get('/test', (req, res) => {
 
 app.get('/time', (req, res) => {
     const currentTime = new Date().toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-    })
-    res.status(200).json({ status: 200, message: currentTime });
-});
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  
+    res.status(200).json({ status: 200, data: { time: currentTime } });
+  });
 
 
 app.get('/hello/:id?', (req, res) => {
@@ -38,21 +134,20 @@ app.get('/hello/:id?', (req, res) => {
 
 
 app.get('/search', (req, res) => {
-
-    const { searchQuery } = req.query;
-
+    const searchQuery = req.query.s;
+  
     if (searchQuery) {
-        res.status(200).json({ status: 200, message: "ok", data: searchQuery });
+      res.status(200).json({ status: 200, message: 'ok', data: searchQuery });
     } else {
-        res.status(500).json({ status: 500, error: true, message: "you have to provide a search" });
+      res.status(500).json({ status: 500, error: true, message: 'you have to provide a search' });
     }
-});
+  });
 
-app.get('/movies/get', (req, res) => {
+app.get('/api/movies', (req, res) => {
     res.status(200).json({ status: 200, data: movies });
-});
+  });
 
-app.get('/movies/get/by-date', (req, res) => {
+app.get('/api/movies/get/by-date', (req, res) => {
     movies.sort((a, b) => {
         if (a.year < b.year) return -1;
         if (a.year > b.year) return 1;
@@ -62,7 +157,7 @@ app.get('/movies/get/by-date', (req, res) => {
     res.status(200).json({ status: 200, data: movies });
 });
 
-app.get('/movies/get/by-rating', (req, res) => {
+app.get('/api/movies/get/by-rating', (req, res) => {
     movies.sort((a, b) => {
         if (a.rating < b.rating) return -1;
         if (a.rating > b.rating) return 1;
@@ -72,7 +167,7 @@ app.get('/movies/get/by-rating', (req, res) => {
     res.status(200).json({ status: 200, data: movies });
 });
 
-app.get('/movies/get/by-title', (req, res) => {
+app.get('/api/movies/get/by-title', (req, res) => {
     movies.sort((a, b) => {
         if (a.title < b.title) return -1;
         if (a.title > b.title) return 1;
@@ -82,7 +177,7 @@ app.get('/movies/get/by-title', (req, res) => {
     res.status(200).json({ status: 200, data: movies });
 });
 
-app.get('/movies/get/id/:index', (req, res) => {
+app.get('/api/movies/:index', (req, res) => {
     const index = parseInt(req.params.index);
 
     if (isNaN(index) || index < 0 || index >= movies.length) {
@@ -93,11 +188,7 @@ app.get('/movies/get/id/:index', (req, res) => {
     }
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-
-app.get('/movies/add', (req, res) => {
+app.get('/api/addmovies', (req, res) => {
     const { title, year, rating } = req.query;
     if (!title || !year) {
         return res.status(403).json({
@@ -119,33 +210,36 @@ app.get('/movies/add', (req, res) => {
     res.status(200).json({ status: 200, data: movies });
 });
 
-app.put('/movies/edit/:id', (req, res) => {
-    const movieId = parseInt(req.params.id);
-    const { title, rating } = req.query;
+app.get('api/editmovies', (req, res) => {
+    // const movieId = parseInt(req.params.id);
+    // const { title, year, rating } = req.query;
   
-    const movieToUpdate = movies.find((movie) => movie.id === movieId);
+    // const movieToUpdate = movies.find((movie) => movie.id === movieId);
   
-    if (!movieToUpdate) {
-      return res.status(404).json({
-        status: 404,
-        error: true,
-        message: `Movie with ID ${movieId} not found`,
-      });
-    }
+    // if (!movieToUpdate) {
+    //   return res.status(404).json({
+    //     status: 404,
+    //     error: true,
+    //     message: `Movie with ID ${movieId} not found`,
+    //   });
+    // }
     
-    if (title) {
-      movieToUpdate.title = title;
-    }
+    // if (title) {
+    //   movieToUpdate.title = title;
+    // }
+    // if (year) {
+    //     movieToUpdate.year = year;
+    //   }
 
-    if (rating) {
-      movieToUpdate.rating = parseFloat(rating);
-    }
-  
+    // if (rating) {
+    //   movieToUpdate.rating = parseFloat(rating);
+    // }
+    console.log("hello world");
     res.status(200).json({ status: 200, data: movies });
   });
 
 
-app.delete('/movies/delete/id/:index', (req, res) => {
+app.delete('api/deletemovies/:index', (req, res) => {
     const movieIndex = parseInt(req.params.index);
     const result = deleteMovieByIndex(movieIndex);
 
@@ -168,8 +262,7 @@ function deleteMovieByIndex(index) {
     }
 }
 
-app.listen(3000, () => {
-    console.log('Online');
-})
-
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 
